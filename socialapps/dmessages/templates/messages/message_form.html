@@ -1,0 +1,15 @@
+{% load i18n %}
+
+{% block extra_css %} <link rel="stylesheet" href="{{ STATIC_URL }}css/messages.css">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/buttons.css"> 
+{% endblock %}
+
+{% block content %}
+<form action="{% url socialapps_messages_compose %}" method="post" id="message-send">
+  {% csrf_token %}
+  <fieldset>
+    <div id="message-title">Message To:{{ form.to }} </div>
+    {{ form.body }}
+  </fieldset>
+  <input type="submit" name="send" value="{% trans "Send" %}" class="button blue"/>
+{% endblock %}

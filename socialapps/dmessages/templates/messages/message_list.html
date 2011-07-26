@@ -1,0 +1,36 @@
+{% extends 'messages/base_message.html' %}
+{% load i18n messages_tags avatar_tags%}
+
+
+{% block content_tabs %}{% get_unread_message_count_for user as unread_message_count %}
+<h2 class="content-title">Messages ({{ unread_message_count }} )</h2>{% endblock %}
+
+{% block content %}
+
+<div class="personal-bar messages">
+	<ul>
+	    <li><a href="{% url socialapps_messages_compose %}" rel="facebox[.message_form]" id="new-message" > <span class="ui-icon ui-icon-mail-closed"></span>New Message </a></li></ul></div>
+
+
+<ul id="messages" class="list-view">
+  {% for message in message_list %}
+  <li>
+  {% if message.from_user == user %}
+  <a href="{% url socialapps_messages_detail message.to_user.username %}">
+  <div class="avatar">{% avatar message.to_user 64 %}</div>
+  <div>To: {{ message.to_user }}</div>
+
+  {% get_unread_message_count_between user and message.to_user as unread_between_count %}
+  {% else %}
+  <a href="{% url socialapps_messages_detail message.from_user.username %}">
+  <div class="avatar">{% avatar message.from_user 64 %}</div>
+  <div>From: {{ message.from_user }}</div>
+
+  {% get_unread_message_count_between user and message.from_user as unread_between_count %}
+  {% endif %}
+  <p>{{ message.latest_message }}</p> <p class="date">({{ unread_between_count }} new )</p>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

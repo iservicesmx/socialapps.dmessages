@@ -1,0 +1,25 @@
+{% extends 'messages/base_message.html' %}
+{% load i18n avatar_tags %}
+
+
+{% block content_tabs %}<h2 class="content-title">Conversation with {{ recipient }}</h2>{% endblock %}
+
+{% block content %}
+<div class="personal-bar messages">
+	<ul>
+	    <li><a class="tooltip" href="{% url socialapps_messages_compose_to recipient.username %}" rel="facebox[.message_form]" id="reply" > <span class="ui-icon ui-icon-mail-closed"></span>Reply </a></li></ul></div>
+
+
+<ul id="messages">
+{% for message in message_list %}
+<li class="{% if message.sender == user %}send{% else %}received{% endif %}">
+  <div class="avatar {% if message.sender == user %}send{% else %}received{% endif %}">{% avatar message.sender 64 %}</div>
+  <div class="message-content">
+    <div class="message-body">{{ message }}</div>
+    <p class="date">{{ message.sent_at }}</p>
+  </div>
+  
+</li>
+{% endfor %}
+</ul>
+{% endblock %}
