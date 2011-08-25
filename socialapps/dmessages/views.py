@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.utils.translation import ugettext as _
 from django.utils.translation import ungettext
 from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.http import HttpResponseRedirect
 
 from django.views.generic import ListView
 
@@ -74,23 +75,31 @@ class MessageCompose(CreateView):
     template_form = "messages/message_form.html"
         
     def form_valid(self, form):
-        requested_redirect = self.request.REQUEST.get("next", False)
-
-        message = form.save(self.request.user)
+        
+        sender = self.request.user
         recipients = form.cleaned_data['to']
-
+        body = form.cleaned_data['body']
+        
+        msg = Message.objects.send_message(sender, recipients, body)
+        
         messages.success(self.request, _('Message is sent.'), fail_silently=True)
-                        
+        
         requested_redirect = self.request.REQUEST.get(REDIRECT_FIELD_NAME, False)
 
         # Redirect mechanism
+        self.success_url = reverse('socialapps_messages_list')
+        
         if requested_redirect: 
             self.success_url = requested_redirect
         elif len(recipients) == 1:
             self.success_url = reverse('socialapps_messages_detail',
                                   kwargs={'username': recipients[0].username})
         
-        return super(MessageCompose, self).form_valid(form)    
+        return HttpResponseRedirect(self.success_url)
+        
+    def form_invalid(self, form):
+        print form.errors
+        return super(MessageCompose, self).form_invalid(form)    
     
 
 @login_required

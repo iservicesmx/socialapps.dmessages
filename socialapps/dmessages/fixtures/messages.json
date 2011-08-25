@@ -1,7 +1,7 @@
 [
   {
     "pk": 1, 
-    "model": "messages.message", 
+    "model": "dmessages.message", 
     "fields": {
       "body": "Hello from your friend", 
       "sender_deleted_at": null, 
@@ -11,7 +11,7 @@
   }, 
   {
     "pk": 2, 
-    "model": "messages.message", 
+    "model": "dmessages.message", 
     "fields": {
       "body": "Hello from your mother", 
       "sender_deleted_at": "2010-01-01 12:00:00", 
@@ -21,7 +21,7 @@
   }, 
   {
     "pk": 1, 
-    "model": "messages.messagerecipient", 
+    "model": "dmessages.messagerecipient", 
     "fields": {
       "message": 1, 
       "read_at": null, 
@@ -31,7 +31,7 @@
   },
   {
     "pk": 2, 
-    "model": "messages.messagerecipient", 
+    "model": "dmessages.messagerecipient", 
     "fields": {
       "message": 2, 
       "read_at": "2010-01-01 12:00:00", 
@@ -41,7 +41,7 @@
   },
   {
     "pk": 1,
-    "model": "messages.messagecontact",
+    "model": "dmessages.messagecontact",
     "fields": {
       "from_user": 1,
       "to_user": 2,

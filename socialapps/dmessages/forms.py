@@ -13,26 +13,5 @@ class ComposeForm(forms.ModelForm):
                            required=True)
     class Meta:
         model = Message
-
-    def save(self, sender):
-        """
-        Save the message and send it out into the wide world.
-
-        :param sender:
-            The :class:`User` that sends the message.
-
-        :param parent_msg:
-            The :class:`Message` that preceded this message in the thread.
-
-        :return: The saved :class:`Message`.
-
-        """
-        to_user_list = self.cleaned_data['to']
-        body = self.cleaned_data['body']
-
-        msg = Message.objects.send_message(sender,
-                                           to_user_list,
-                                           body)
-
-        return msg
-
+        exclude = ('sender','recipients')
+        
