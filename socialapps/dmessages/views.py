@@ -73,6 +73,15 @@ class MessageCompose(CreateView):
     type_title      = _("Message")
     form_class = ComposeForm
     template_form = "messages/message_form.html"
+    
+    def get_initial(self):
+        initial = {}
+        recipients = self.kwargs.get('recipients',None)
+        if recipients:
+            username_list = [r.strip() for r in recipients.split("+")]
+            recipients = [u for u in User.objects.filter(username__in=username_list)]
+            initial["to"] = recipients
+        return initial
         
     def form_valid(self, form):
         
