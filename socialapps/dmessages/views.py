@@ -13,6 +13,11 @@ from socialapps.dmessages.models import Message, MessageRecipient, MessageContac
 from socialapps.dmessages.forms import ComposeForm
 
 import datetime
+from socialapps import settings
+if "notification" in settings.INSTALLED_APPS:
+    from notification import models as notification
+else:
+    notification = none
 
 class MessageList(ListView):
     """
@@ -70,6 +75,7 @@ class MessageCompose(CreateView):
     def get_initial(self):
         initial = {}
         recipients = self.kwargs.get('recipients',None)
+
         if recipients:
             username_list = [r.strip() for r in recipients.split("+")]
             recipients = [u for u in User.objects.filter(username__in=username_list)]
@@ -81,9 +87,14 @@ class MessageCompose(CreateView):
         sender = self.request.user
         recipients = form.cleaned_data['to']
         body = form.cleaned_data['body']
-        
+
         msg = Message.objects.send_message(sender, recipients, body)
-        
+
+        print body
+
+        if notification:
+            notification.send(recipients, 'user_message', {'from_user' : sender.get_profile(), 'message' : body });
+
         messages.success(self.request, _('Message is sent.'), fail_silently=True)
         
         requested_redirect = self.request.REQUEST.get(REDIRECT_FIELD_NAME, False)

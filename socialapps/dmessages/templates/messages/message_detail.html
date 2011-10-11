@@ -15,7 +15,7 @@
 <li class="{% if message.sender == user %}send{% else %}received{% endif %}">
   <div class="avatar {% if message.sender == user %}send{% else %}received{% endif %}">{% avatar message.sender 64 %}</div>
   <div class="message-content">
-    <div class="message-body">{{ message }}</div>
+    <div class="message-body">{{ message.body }}</div>
     <p class="date">{{ message.sent_at }}</p>
   </div>
   
