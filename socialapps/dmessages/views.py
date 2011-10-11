@@ -90,8 +90,6 @@ class MessageCompose(CreateView):
 
         msg = Message.objects.send_message(sender, recipients, body)
 
-        print body
-
         if notification:
             notification.send(recipients, 'user_message', {'from_user' : sender.get_profile(), 'message' : body });
 
