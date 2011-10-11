@@ -1,18 +1,11 @@
-from django.contrib.auth.decorators import login_required
-from django.views.generic import list_detail
-from django.views.decorators.http import require_http_methods
 from django.core.urlresolvers import reverse
-from django.views.generic.simple import direct_to_template
 from django.shortcuts import get_object_or_404, redirect
-from django.http import Http404
 from django.contrib.auth.models import User
-from django.template import loader
 from django.contrib import messages
 from django.utils.translation import ugettext as _
 from django.utils.translation import ungettext
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.http import HttpResponseRedirect
-
 from django.views.generic import ListView
 
 from socialapps.core.views import CreateView
@@ -107,12 +100,9 @@ class MessageCompose(CreateView):
         return HttpResponseRedirect(self.success_url)
         
     def form_invalid(self, form):
-        print form.errors
         return super(MessageCompose, self).form_invalid(form)    
     
 
-@login_required
-@require_http_methods(["POST"])
 def message_remove(request, undo=False):
     """
     A ``POST`` to remove messages.
