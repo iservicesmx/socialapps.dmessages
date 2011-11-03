@@ -4,11 +4,33 @@
 	<link rel="stylesheet" href="{{ STATIC_URL }}css/buttons.css"> 
 {% endblock %}
 
+{% block extra_js %}
+	<script type="text/javascript">
+		function save(data, statusText, xhr, $form) {
+			if (data.success) {
+				window.location = data.success_url;
+			} else {
+				for (var item in data.errors) {
+					$('#message-send-errors .errorlist').html('');
+					for (var error in data.errors[item]) {
+						$('#message-send-errors .errorlist').append('<li>' + data.errors[item][error] + '</li>');
+					}
+				}
+			}
+		}
+
+	    $(document).ready(function() {
+	        $('#message-send').ajaxForm({dataType : 'json', success : save });
+	    });
+	</script>
+{% endblock %}
+
 {% block content %}
 <form action="{% url socialapps_messages_compose %}" method="post" id="message-send">
   {% csrf_token %}
   <input type="hidden" name="next" id="id_next" value="{{ request.REQUEST.next }}" />
   <fieldset>
+	<div id="message-send-errors"><ul class="errorlist"></ul></div>	
     <div id="message-title">Message To:{{ form.to }} </div>
     {{ form.body }}
   </fieldset>
