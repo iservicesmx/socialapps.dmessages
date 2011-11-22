@@ -8,7 +8,7 @@ import datetime
 
 class ComposeForm(forms.ModelForm):
     to = CommaSeparatedUserIdField(label=_("To"),
-                                widget= forms.HiddenInput())
+                                    widget= forms.HiddenInput())
     body = forms.CharField(label=_("Message"),
                            widget=forms.Textarea({'class': 'message'}),
                            required=True)

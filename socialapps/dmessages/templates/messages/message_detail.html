@@ -2,12 +2,12 @@
 {% load i18n avatar_tags %}
 
 
-{% block content_tabs %}<h2 class="content-title">Conversation with {{ recipient }}</h2>{% endblock %}
+{% block content_tabs %}<h2 class="content-title">Conversation with {{ recipient.get_profile.name }}</h2>{% endblock %}
 
 {% block content %}
 <div class="personal-bar messages">
 	<ul>
-	    <li><a class="tooltip" href="{% url socialapps_messages_compose_to recipient.username %}" rel="facebox[.message_form]" id="reply" > <span class="ui-icon ui-icon-mail-closed"></span>Reply </a></li></ul></div>
+	    <li><a class="tooltip" href="{% url socialapps_messages_compose_to recipient.id %}" rel="facebox[.message_form]" id="reply" > <span class="ui-icon ui-icon-mail-closed"></span>Reply </a></li></ul></div>
 
 
 <ul id="messages">

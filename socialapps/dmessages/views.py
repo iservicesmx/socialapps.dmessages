@@ -45,8 +45,8 @@ class MessageDetail(ListView):
     context_object_name = "message_list"
     
     def get_queryset(self):
-        username = self.kwargs.get('username', None)
-        self.recipient = get_object_or_404(User, username__iexact=username)
+        uid = self.kwargs.get('userid', None)
+        self.recipient = get_object_or_404(User, id=uid)
         return Message.objects.get_conversation_between(self.request.user,
                                                         self.recipient)
         
@@ -66,27 +66,31 @@ class MessageCompose(CreateView):
     Compose a new message
 
     :recipients:
-        String containing the usernames to whom the message is send to. Can be
-        multiple username by seperating them with a ``+`` sign.
+        String containing the uids to whom the message is send to. Can be
+        multiple uids by seperating them with a ``+`` sign.
     """
     action_title    = _("Create")
     type_title      = _("Message")
-    form_class = ComposeForm
-    template_form = "messages/message_form.html"
+    form_class      = ComposeForm
+    template_form   = "messages/message_form.html"
     
     def get_initial(self):
         initial = {}
         recipients = self.kwargs.get('recipients',None)
 
         if recipients:
-            username_list = [r.strip() for r in recipients.split("+")]
-            recipients = [u for u in User.objects.filter(username__in=username_list)]
-            initial["to"] = recipients
+            uids_list = [r.strip() for r in recipients.split("+")]
+            recipients = [str(u.id) for u in User.objects.filter(id__in=uids_list)]
+            initial["to"] = ','.join(recipients)
         return initial
         
     def get_context_data(self, **kwargs):
+        if not self.get_initial():
+            users = User.objects.filter(is_active = True)
+        else: 
+            users = None
         kwargs.update({
-            'users' : User.objects.filter(is_active = True)
+            'users' : users,
         })
         return super(MessageCompose, self).get_context_data(**kwargs)
         
@@ -111,7 +115,7 @@ class MessageCompose(CreateView):
         if requested_redirect: 
             self.success_url = requested_redirect
         elif len(recipients) == 1:
-            self.success_url = reverse('socialapps_messages_detail', kwargs={'username': recipients[0].username})
+            self.success_url = reverse('socialapps_messages_detail', kwargs={'userid': recipients[0].id})
         return HttpResponse(python_to_json({"success": True, "success_url": self.success_url}), content_type='application/json')
         
     def form_invalid(self, form):

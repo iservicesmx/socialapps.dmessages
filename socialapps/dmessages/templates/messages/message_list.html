@@ -16,13 +16,13 @@
   {% for message in message_list %}
   <li>
   {% if message.from_user == user %}
-  <a href="{% url socialapps_messages_detail message.to_user.username %}">
+  <a href="{% url socialapps_messages_detail message.to_user.id %}">
   <div class="avatar">{% avatar message.to_user 64 %}</div>
-  <div>To: {{ message.to_user }}</div>
+  <div>To: {{ message.to_user.get_profile.name }}</div>
 
   {% get_unread_message_count_between user and message.to_user as unread_between_count %}
   {% else %}
-  <a href="{% url socialapps_messages_detail message.from_user.username %}">
+  <a href="{% url socialapps_messages_detail message.from_user.id %}">
   <div class="avatar">{% avatar message.from_user 64 %}</div>
   <div>From: {{ message.from_user }}</div>
 

@@ -17,7 +17,7 @@ urlpatterns = patterns('',
         messages_views.MessageCompose.as_view(),
         name='socialapps_messages_reply'),
 
-    url(r'^view/(?P<username>\w+)/$',
+    url(r'^view/(?P<userid>\d+)/$',
         login_required(messages_views.MessageDetail.as_view()),
         name='socialapps_messages_detail'),
 

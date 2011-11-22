@@ -20,14 +20,15 @@
 		}
 	    $(document).ready(function() {
 	        $('#message-send').ajaxForm({dataType : 'json', success : save });
-			$(function() {
+			{% if users %}
+				$(function() {
 					var availableTags = [
 						{% for u in users %}
 						{
 							value: "{{ u.id }}",
 							label: "{{ u.get_profile.name }}",
 							icon: "{{ u.get_profile.get_avatar_url }}",
-						},
+						},	
 						{% endfor %}
 					];
 					function split( val ) {
@@ -43,48 +44,45 @@
 									$( this ).data( "autocomplete" ).menu.active ) {
 								event.preventDefault();
 							}
-						})
-						.autocomplete({
-							minLength: 0,
-							source: function( request, response ) {
-								// delegate back to autocomplete, but extract the last term
-								response( $.ui.autocomplete.filter(
-									availableTags, extractLast( request.term ) ) );
-							},
-							focus: function() {
-								// prevent value inserted on focus
-								return false;
-							},
-							select: function( event, ui ) {
-								var terms = split( this.value );
-								// remove the current input
-								terms.pop();
-								// add the selected item
-								terms.push( ui.item.label );
-								// add placeholder to get the comma-and-space at the end
-								terms.push( "" );
-								this.value = terms.join( ", " );
-								//again for users id
-								var terms = split( $( "#id_to" ).val() );
-								// remove the current input
-								terms.pop();
-								// add the selected item
-								terms.push( ui.item.value );
-								// add placeholder to get the comma-and-space at the end
-								terms.push( "" );
-								$( "#id_to" ).val(terms.join( ","));
-								return false;
-							}
-						})
-						.data( "autocomplete" )._renderItem = function( ul, item ) {
-							return $( "<li></li>" )
-								.data( "item.autocomplete", item )	
-								.append( "<a><img width='16' height='16' src='" + item.icon + "'/>" + item.label + "</a>" )
-								.appendTo( ul );
-						};
+					}).autocomplete({
+						minLength: 0,
+						source: function( request, response ) {
+							// delegate back to autocomplete, but extract the last term
+							response( $.ui.autocomplete.filter(
+								availableTags, extractLast( request.term ) ) );
+						},
+						focus: function() {
+							// prevent value inserted on focus
+							return false;
+						},
+						select: function( event, ui ) {
+							var terms = split( this.value );
+							// remove the current input
+							terms.pop();
+							// add the selected item
+							terms.push( ui.item.label );
+							// add placeholder to get the comma-and-space at the end
+							terms.push( "" );
+							this.value = terms.join( ", " );
+							//again for users id
+							var terms = split( $( "#id_to" ).val() );
+							// remove the current input
+							terms.pop();
+							// add the selected item
+							terms.push( ui.item.value );
+							// add placeholder to get the comma-and-space at the end
+							terms.push( "" );
+							$( "#id_to" ).val(terms.join( ","));
+							return false;
+						}
+					}).data( "autocomplete" )._renderItem = function( ul, item ) {
+						return $( "<li></li>" )
+							.data( "item.autocomplete", item )	
+							.append( "<a><img width='16' height='16' src='" + item.icon + "'/>" + item.label + "</a>" )
+							.appendTo( ul );
+					};
 				});
-
-				
+			{% endif %}
 	    });
 	</script>
 {% endblock %}
@@ -95,8 +93,15 @@
   <input type="hidden" name="next" id="id_next" value="{{ request.REQUEST.next }}" />
   <fieldset>
 	<div id="message-send-errors"><ul class="errorlist"></ul></div>	
-    <div id="message-title">Message To:{{ form.to }} </div>
-	<input type="text" id="to_autocomplete" val=""/>
+    <div id="message-title">
+		{% if users %}
+			{% trans "Message To" %}:
+			<input type="text" id="to_autocomplete" val=""/>
+		{% else %}
+			{% trans "Reply Message" %}
+		{% endif %}
+		{{ form.to }}
+	</div>
     {{ form.body }}
   </fieldset>
   <input type="submit" name="send" value="{% trans "Send" %}" class="button blue"/>
