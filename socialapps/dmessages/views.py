@@ -5,12 +5,14 @@ from django.contrib import messages
 from django.utils.translation import ugettext as _
 from django.utils.translation import ungettext
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.views.generic import ListView
+from socialapps.core.utils import python_to_json
 
 from socialapps.core.views import CreateView
 from socialapps.dmessages.models import Message, MessageRecipient, MessageContact
 from socialapps.dmessages.forms import ComposeForm
+
 
 import datetime
 from socialapps import settings
@@ -82,6 +84,12 @@ class MessageCompose(CreateView):
             initial["to"] = recipients
         return initial
         
+    def get_context_data(self, **kwargs):
+        kwargs.update({
+            'users' : User.objects.filter(is_active = True)
+        })
+        return super(MessageCompose, self).get_context_data(**kwargs)
+        
     def form_valid(self, form):
         
         sender = self.request.user
@@ -103,14 +111,11 @@ class MessageCompose(CreateView):
         if requested_redirect: 
             self.success_url = requested_redirect
         elif len(recipients) == 1:
-            self.success_url = reverse('socialapps_messages_detail',
-                                  kwargs={'username': recipients[0].username})
-        
-        return HttpResponseRedirect(self.success_url)
+            self.success_url = reverse('socialapps_messages_detail', kwargs={'username': recipients[0].username})
+        return HttpResponse(python_to_json({"success": True, "success_url": self.success_url}), content_type='application/json')
         
     def form_invalid(self, form):
-        return super(MessageCompose, self).form_invalid(form)    
-    
+        return HttpResponse(python_to_json({"errors" : form.errors}), content_type='application/json')
 
 def message_remove(request, undo=False):
     """

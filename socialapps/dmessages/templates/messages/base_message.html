@@ -5,64 +5,14 @@
 /*  messages
 ................................... */
 
-#messages{
-    padding: 0;
-    margin: 20px 0 0;
-}
-
-#messages li{
-padding: 5px 11px;
-    margin: 0;
-    overflow: auto;
-    color:black;
-    
-
-
-} 
-
-#messages li a{
-    font-weight: bold;
-    display: block;
-    margin: 0 0 5px;
-    text-decoration: none;
-}
-
-#messages.list-view a{
-    display: block;
-    overflow: auto;
-    padding: 10px 0 10px 10px;
-    border: 1px solid #ddd;
-    -moz-border-radius: 2px;
-border-radius: 2px;
-
-
-
-}
-
-#messages.list-view a:hover{
-    background-color: #eee;
-}
-
-
-p.date {
-    font-size: 70%;
-margin: -9px -2px 0;
-    color: #777;
-    float: right;
-    text-align: right;
-}
-
-.avatar img {
-  width: 64px;
-  border: 1px solid #ccc;
-  float: right;
-margin: 1px 10px;
-}
-
-.avatar.received img{
-  float: left;
-}
-
+#messages{ padding: 0; margin: 20px 0 0; }
+#messages li{ padding: 5px 11px; margin: 0; overflow: auto; color:black; }
+#messages li a{ font-weight: bold; display: block; margin: 0 0 5px; text-decoration: none;}
+#messages.list-view a{ display: block; overflow: auto; padding: 10px 0 10px 10px; border: 1px solid #ddd; -moz-border-radius: 2px; border-radius: 2px; }
+#messages.list-view a:hover{ background-color: #eee; }
+p.date { font-size: 70%; margin: -9px -2px 0; color: #777; float: right; text-align: right; }
+.avatar img { width: 64px; border: 1px solid #ccc; float: right; margin: 1px 10px; }
+.avatar.received img{ float: left; }
 .message-content{
     margin: 0 110px;
     padding: 7px 15px;
@@ -84,14 +34,10 @@ margin: 1px 10px;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
 }
-#messages.list-view a{
-    margin: 3px 40px;
-}
-
+#messages.list-view a{ margin: 3px 40px; }
+ul#messages.list-view li a .avatar { margin-left: 10px; margin-top: -4px; border: none; }
 .send .message-content, #messages.list-view a{
     background-color: #e6e6e6;
-    
-    
 	border: 1px solid #CADCEA;
 	background: #E1F2FC !important;
 	background: -webkit-gradient(linear, left top, left bottom, from(#E1F2FC), to(#CAE9FD)) !important;;
@@ -99,13 +45,10 @@ margin: 1px 10px;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E1F2FC', endColorstr='#CAE9FD');
 	color: #225B86;
 	text-shadow: 0 1px 0 white;
-
 }
 
 .received .message-content, #messages.list-view a:hover{
-
     background-color: #dadada;
-    
 	border: 1px solid #B8C97B;
 	background: #E5EDC4!important;
 	background: -webkit-gradient(linear, left top, left bottom, from(#E5EDC4), to(#D9E4AC)) !important;
@@ -113,75 +56,31 @@ margin: 1px 10px;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E5EDC4', endColorstr='#D9E4AC');
 	color: #3F7227;
 	text-shadow: 0 1px 0 white;
-
 }    
 
-#messages img { 
-	background-color: #DDD;
-	height: 64px;
-    width: 64px;
-	cursor: pointer;
-}
- .message-content .message-body {
-     min-height: 42px;
- }
-
-h2.content-title {
-    text-align: center;
-    margin: -10px -5px 0px;
-    border-radius: 12px 12px 0 0;
-    -webkit-border-radius: 12px 12px 0 0;
-    -moz-border-radius: 12px 12px 0 0;        
-} 
-
+#messages img {  background-color: #DDD; height: 64px; width: 64px; cursor: pointer; }
+.message-content .message-body { min-height: 42px; }
+h2.content-title { text-align: center; margin: -10px -5px 0px; border-radius: 12px 12px 0 0; -webkit-border-radius: 12px 12px 0 0; -moz-border-radius: 12px 12px 0 0; } 
 button {
     margin: -48px 3px 0px 0px;
     position: relative;
     float: right;
     border-radius: 9px;
-
     width: 50px;
     height: 50px;
 }
 
-a#reply button {
-    background: url('/static/images/75.png') no-repeat;    
-}
-
-a#new-message button {
-    background: url('/static/images/13.png') no-repeat;    
-}
-
-ul#messages li.received {
-//    margin-right: -28px;
-}
-
-ul#messages li.send {
-//    margin-left: -28px;
-}
-
-#facebox .closed {
-	display:none;
-}
-
-#messages.list-view a {    text-align:left;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    }
-#messages.list-view .to-user {
-
-}
-#messages.list-view .from-user {
-    
-}
-#messages.list-view a p {
-    width: 88%;
-    margin: 5px 0 0 0;
-    font-size: 88%;
-}
-
-
-
+a#reply button { background: url('/static/images/75.png') no-repeat; }
+a#new-message button { background: url('/static/images/13.png') no-repeat;   }
+ul#messages li.received { /*    margin-right: -28px;*/ }
+ul#messages li.send { /*    margin-left: -28px; */ }
+#facebox .closed { display:none; }
+#messages.list-view a {    text-align:left; -moz-border-radius: 10px; -webkit-border-radius: 10px; }
+#messages.list-view .to-user { }
+#messages.list-view .from-user { }
+#messages.list-view a p { width: 81%; margin: 5px 16px 0 0; font-size: 88%; }
+ul#messages li.send .avatar.send, ul#messages li.received .avatar.received { border:none; margin-top: -5px;}
+ul#messages li.send .avatar.send {float:right;}
 </style>
 
 {% endblock %}
