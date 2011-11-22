@@ -84,6 +84,12 @@ class MessageCompose(CreateView):
             initial["to"] = recipients
         return initial
         
+    def get_context_data(self, **kwargs):
+        kwargs.update({
+            'users' : User.objects.filter(is_active = True)
+        })
+        return super(MessageCompose, self).get_context_data(**kwargs)
+        
     def form_valid(self, form):
         
         sender = self.request.user
