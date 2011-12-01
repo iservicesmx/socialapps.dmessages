@@ -13,12 +13,19 @@
 <ul id="messages">
 {% for message in message_list %}
 <li class="{% if message.sender == user %}send{% else %}received{% endif %}">
-  <div class="avatar {% if message.sender == user %}send{% else %}received{% endif %}">{% avatar message.sender 64 %}</div>
-  <div class="message-content">
-    <div class="message-body">{{ message.body }}</div>
-    <p class="date">{{ message.sent_at }}</p>
-  </div>
-  
+	<div class="avatar {% if message.sender == user %}send{% else %}received{% endif %}">{% avatar message.sender 64 %}</div>
+	<div class="message-content">
+	<div class="message-body">
+		{{ message.body }}
+		<form method="POST" action="{% url socialapps_messages_remove %}" class="delete-message">
+			{% csrf_token %}
+			<input type="hidden" name="message_pks" value="{{message.id}}"/>
+			<input type="hidden" name="next" value="{% url socialapps_messages_detail recipient.id %}"/>
+			<input type="submit" value="" class="uiSelectorButton uiCloseButton tooltip" title="{% trans 'Delete message' %}"/>
+		</form>
+	</div>
+	<p class="date">{{ message.sent_at }}</p>		
+	</div>
 </li>
 {% endfor %}
 </ul>
