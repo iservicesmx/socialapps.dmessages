@@ -10,24 +10,24 @@ urlpatterns = patterns('',
         name='socialapps_messages_compose'),
 
     url(r'^compose/(?P<recipients>[\+\w]+)/$',
-        messages_views.MessageCompose.as_view(),
+        login_required(messages_views.MessageCompose.as_view()),
         name='socialapps_messages_compose_to'),
 
     url(r'^reply/(?P<parent_id>[\d]+)/$',
-        messages_views.MessageCompose.as_view(),
+        login_required(messages_views.MessageCompose.as_view()),
         name='socialapps_messages_reply'),
 
-    url(r'^view/(?P<username>\w+)/$',
+    url(r'^view/(?P<userid>\d+)/$',
         login_required(messages_views.MessageDetail.as_view()),
         name='socialapps_messages_detail'),
 
 
     url(r'^remove/$',
-        messages_views.message_remove,
+        login_required(messages_views.message_remove),
         name='socialapps_messages_remove'),
 
     url(r'^unremove/$',
-        messages_views.message_remove,
+        login_required(messages_views.message_remove),
         {'undo': True},
         name='socialapps_messages_unremove'),
 
