@@ -8,7 +8,7 @@
 		<li class="vertical-divider"></li>
 		<li>
 			<div class="btn-group">
-				<a class="btn primary" href="{% url socialapps_messages_compose %}" rel="facebox[.message_form]" id="new-message"><i class="icon envelope"></i>&nbsp;{% trans "Compose message" %}</a>
+				<a class="btn primary" href="{% url socialapps_messages_compose %}" rel="facebox[.message_form]" id="new-message"><i class="icon-envelope"></i>&nbsp;{% trans "Compose message" %}</a>
 			</div>
 		</li>
 	</ul>
@@ -24,7 +24,7 @@
 						<a class="conversation-item" href="{% url socialapps_messages_detail message.to_user.id %}">
 							<div class="conversation-detail">
 								{% if unread_between_count > 0 %}
-									<span class="label success">New</span>
+									<span class="label label-success">{{ unread_between_count }} {% trans "new" %}</span>
 								{% endif %}
 								{% avatar message.to_user 50 %}
 								<div class="name">{{ message.to_user.get_profile.name }}</div>
@@ -37,7 +37,7 @@
 						<a class="conversation-item" href="{% url socialapps_messages_detail message.from_user.id %}">
 							<div class="conversation-detail">
 								{% if unread_between_count > 0 %}
-									<span class="label success">New</span>
+									<span class="label label-success">{{ unread_between_count }} {% trans "new" %}</span>
 								{% endif %}
 								{% avatar message.from_user 50 %}
 								<div class="name">{{ message.from_user.get_profile.name }}</div>
