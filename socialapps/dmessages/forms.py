@@ -10,9 +10,9 @@ class ComposeForm(forms.ModelForm):
     to = CommaSeparatedUserIdField(label=_("To"),
                                     widget= forms.HiddenInput())
     body = forms.CharField(label=_("Message"),
-                           widget=forms.Textarea({'class': 'message'}),
+                           widget=forms.Textarea({'class': 'message', 'cols': 85, 'rows': 3}),
                            required=True)
     class Meta:
         model = Message
-        exclude = ('sender','recipients')
+        fields = ('to','body')
         
