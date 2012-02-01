@@ -105,9 +105,3 @@
 }    
 
 #messages .message-content .message-body { min-height: 42px; }
-
-#message-form textarea,
-#message-form #to_autocomplete {
-    width: 99%;
-    height: auto;
-}
