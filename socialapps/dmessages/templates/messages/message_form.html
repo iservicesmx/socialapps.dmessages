@@ -1,10 +1,6 @@
 {% load i18n %}
+{% load bootstrap_tags %}
 
-{% block extra_css %} <link rel="stylesheet" href="{{ STATIC_URL }}css/messages.css">
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/buttons.css"> 
-{% endblock %}
-
-{% block extra_js %}
 	<script type="text/javascript">
 		function save(data, statusText, xhr, $form) {
 			if (data.success) {
@@ -13,13 +9,13 @@
 				for (var item in data.errors) {
 					$('#message-send-errors .errorlist').html('');
 					for (var error in data.errors[item]) {
-						$('#message-send-errors .errorlist').append('<li>' + data.errors[item][error] + '</li>');
+						$('#message-send-errors .errorlist').append('<li>' + item + ': ' + data.errors[item][error] + '</li>');
 					}
 				}
 			}
 		}
 	    $(document).ready(function() {
-	        $('#message-send').ajaxForm({dataType : 'json', success : save });
+			$('#message-form').ajaxForm({dataType : 'json', success : save });
 			{% if users %}
 				$(function() {
 					var availableTags = [
@@ -85,24 +81,31 @@
 			{% endif %}
 	    });
 	</script>
-{% endblock %}
 
-{% block content %}
-<form action="{% url socialapps_messages_compose %}" method="post" id="message-send">
-  {% csrf_token %}
-  <input type="hidden" name="next" id="id_next" value="{{ request.REQUEST.next }}" />
-  <fieldset>
-	<div id="message-send-errors"><ul class="errorlist"></ul></div>	
-    <div id="message-title">
-		{% if users %}
-			{% trans "Message To" %}:
-			<input type="text" id="to_autocomplete" val=""/>
-		{% else %}
-			{% trans "Send Message" %}
-		{% endif %}
-		{{ form.to }}
-	</div>
-    {{ form.body }}
-  </fieldset>
-  <input type="submit" name="send" value="{% trans "Send" %}" class="button blue"/>
-{% endblock %}
+<div class="modal-header">
+	<a class="close" data-dismiss="modal">×</a>
+	<h3>{% trans "Send message" %}</h3>
+</div>
+<form action="{% url socialapps_messages_compose %}" method="post" class="form-horizontal" id="message-form">
+	{% csrf_token %}
+	<input type="hidden" name="next" id="id_next" value="{{ request.REQUEST.next }}" />
+		<div class="modal-body">
+			<div id="message-send-errors"><ul class="errorlist"></ul></div>	
+			<fieldset>
+				{% if users %}
+					<div class="clearfix">
+						<label for="to_autocomplete">{% trans "To" %}</label>
+						<div class="input">
+							<input type="text" id="to_autocomplete" val=""/>
+						</div>
+					</div>
+				{% endif %}
+				{{ form|as_bootstrap }}
+	  		</fieldset>
+		</div>
+		<div class="modal-footer">			
+	  		<input type="submit" name="send" value="{% trans "Send" %}" class="btn btn-primary"/>
+			<a href="#" class="btn" data-dismiss="modal">{% trans "Cancel" %}</a>
+		  </div>
+</form>
+</div>

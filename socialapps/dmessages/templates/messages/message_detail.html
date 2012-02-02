@@ -2,31 +2,51 @@
 {% load i18n avatar_tags %}
 
 
-{% block content_tabs %}<h2 class="content-title">Conversation with {{ recipient.get_profile.name }}</h2>{% endblock %}
+{% block content_tabs %}
+	<ul class="nav cms-breadcrumb">
+		<li>
+			<a href="{% url socialapps_messages_list %}">
+				<div class="item">{% trans "Messages" %}</div>
+				<div class="separator right"></div>
+			</a>
+		</li>
+		<li class="current">
+			<a href="#">
+				<div class="separator left"></div>
+				<div class="item">{{ recipient.get_profile.name }}</div>
+				<div class="separator right"></div>
+			</a>
+		</li>
+	</ul>
+	<ul class="nav pull-right">
+		<li class="vertical-divider"></li>
+		<li>
+			<div class="btn-group">
+				<a class="btn primary modal-launch-button" href="#modal-dialog" data-toggle="modal" data-content="{% url socialapps_messages_compose_to recipient.id %}"><i class="icon-share-alt"></i>&nbsp;{% trans "Reply message" %}</a>
+			</div>
+		</li>
+	</ul>
+{% endblock %}
 
-{% block content %}
-<div class="personal-bar messages">
-	<ul>
-	    <li><a class="tooltip" href="{% url socialapps_messages_compose_to recipient.id %}" rel="facebox[.message_form]" id="reply" > <span class="ui-icon ui-icon-mail-closed"></span>Reply </a></li></ul></div>
-
-
-<ul id="messages">
-{% for message in message_list %}
-<li class="{% if message.sender == user %}send{% else %}received{% endif %}">
-	<div class="avatar {% if message.sender == user %}send{% else %}received{% endif %}">{% avatar message.sender 64 %}</div>
-	<div class="message-content">
-	<div class="message-body">
-		{{ message.body }}
-		<form method="POST" action="{% url socialapps_messages_remove %}" class="delete-message">
-			{% csrf_token %}
-			<input type="hidden" name="message_pks" value="{{message.id}}"/>
-			<input type="hidden" name="next" value="{% url socialapps_messages_detail recipient.id %}"/>
-			<input type="submit" value="" class="uiSelectorButton uiCloseButton tooltip" title="{% trans 'Delete message' %}"/>
-		</form>
-	</div>
-	<p class="date">{{ message.sent_at }}</p>		
-	</div>
-</li>
-{% endfor %}
-</ul>
+{% block content_full %}
+<div id="messages">
+	{% for message in message_list %}
+		<li class="{% if message.sender == user %}send{% else %}received{% endif %}">			
+			<div class="{% if message.sender == user %} to_user {% else %} from_user {%endif %}">
+				{% avatar message.sender 50 %}
+			</div>
+			<div class="message-content">
+			<div class="message-body">
+				{{ message.body }}
+				<form method="POST" action="{% url socialapps_messages_remove %}" class="delete-message">
+					{% csrf_token %}
+					<input type="hidden" name="message_pks" value="{{message.id}}"/>
+					<input type="hidden" name="next" value="{% url socialapps_messages_detail recipient.id %}"/>
+					<input type="submit" value="" class="uiSelectorButton uiCloseButton tooltip" title="{% trans 'Delete message' %}"/>
+				</form>
+			</div>
+			<p class="date">{{ message.sent_at }}</p>		
+			</div>
+		</li>
+	{% endfor %}
 {% endblock %}

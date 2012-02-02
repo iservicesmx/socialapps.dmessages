@@ -2,35 +2,52 @@
 {% load i18n messages_tags avatar_tags%}
 
 
-{% block content_tabs %}{% get_unread_message_count_for user as unread_message_count %}
-<h2 class="content-title">Messages ({{ unread_message_count }} )</h2>{% endblock %}
+{% block content_tabs %}
+	<a class="brand">{% trans "Messages" %}</a>
+	<ul class="nav pull-right">
+		<li class="vertical-divider"></li>
+		<li>
+			<div class="btn-group">
+				<a class="btn primary modal-launch-button" href="#modal-dialog" data-toggle="modal" data-content="{% url socialapps_messages_compose %}"><i class="icon-envelope"></i>&nbsp;{% trans "Compose message" %}</a>
+			</div>
+		</li>
+	</ul>
+{% endblock %}
 
-{% block content %}
-
-<div class="personal-bar messages">
-	<ul>
-	    <li><a href="{% url socialapps_messages_compose %}" rel="facebox[.message_form]" id="new-message" > <span class="ui-icon ui-icon-mail-closed"></span>New Message </a></li></ul></div>
-
-
-<ul id="messages" class="list-view">
-  {% for message in message_list %}
-  <li>
-  {% if message.from_user == user %}
-  <a href="{% url socialapps_messages_detail message.to_user.id %}">
-  <div class="avatar">{% avatar message.to_user 64 %}</div>
-  <div>To: {{ message.to_user.get_profile.name }}</div>
-
-  {% get_unread_message_count_between user and message.to_user as unread_between_count %}
-  {% else %}
-  <a href="{% url socialapps_messages_detail message.from_user.id %}">
-  <div class="avatar">{% avatar message.from_user 64 %}</div>
-  <div>From: {{ message.from_user }}</div>
-
-  {% get_unread_message_count_between user and message.from_user as unread_between_count %}
-  {% endif %}
-  <p>{{ message.latest_message }}</p> <p class="date">({{ unread_between_count }} new )</p>
-    </a>
-  </li>
-  {% endfor %}
-</ul>
+{% block content_full %}
+	<div id="messages">
+		{% for message in message_list %}
+			<div class="row">
+				<div class="span12">
+					{% if message.from_user == user %}
+						{% get_unread_message_count_between user and message.to_user as unread_between_count %}
+						<a class="conversation-item" href="{% url socialapps_messages_detail message.to_user.id %}">
+							<div class="conversation-detail">
+								{% if unread_between_count > 0 %}
+									<span class="label label-success">{{ unread_between_count }} {% trans "new" %}</span>
+								{% endif %}
+								{% avatar message.to_user 50 %}
+								<div class="name">{{ message.to_user.get_profile.name }}</div>
+								<div class="sent_at">{{ message.latest_message.sent_at }}</div>
+								<div class="latest-message">{{ message.latest_message }}</div>
+							</div>
+						</a>
+					{% else %}
+						{% get_unread_message_count_between user and message.from_user as unread_between_count %}
+						<a class="conversation-item" href="{% url socialapps_messages_detail message.from_user.id %}">
+							<div class="conversation-detail">
+								{% if unread_between_count > 0 %}
+									<span class="label label-success">{{ unread_between_count }} {% trans "new" %}</span>
+								{% endif %}
+								{% avatar message.from_user 50 %}
+								<div class="name">{{ message.from_user.get_profile.name }}</div>
+								<div class="sent_at">{{ message.latest_message.sent_at }}</div>
+								<div class="latest-message">{{ message.latest_message }}</div>
+							</div>
+						</a>
+					{% endif %}
+				</div>
+			</div>
+		{% endfor %}
+	</div>
 {% endblock %}
