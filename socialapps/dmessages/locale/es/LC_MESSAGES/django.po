@@ -160,7 +160,7 @@ msgstr "Cancelar"
 
 #: templates/messages/message_list.html:11
 msgid "Compose message"
-msgstr "Escribir mensaje"
+msgstr "Redactar mensaje"
 
 #: templates/messages/message_list.html:27
 #: templates/messages/message_list.html:40
