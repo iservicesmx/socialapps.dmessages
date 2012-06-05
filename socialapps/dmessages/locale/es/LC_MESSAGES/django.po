@@ -1,0 +1,172 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-05 00:05-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: admin.py:25
+msgid "Date/time"
+msgstr "Fecha/Hora"
+
+#: fields.py:56
+#, python-format
+msgid "The following users ids are incorrect: %(users)s."
+msgstr "Los siguientes id de usuarios son incorrectos: %(users)s."
+
+#: forms.py:10 templates/messages/message_form.html:97
+msgid "To"
+msgstr "Para"
+
+#: forms.py:12 views.py:73
+msgid "Message"
+msgstr "Mensaje"
+
+#: management.py:8
+msgid "Message you"
+msgstr "Tienes mensaje"
+
+#: management.py:8
+msgid "Someone send you a message"
+msgstr "Alguien te ha enviado un mensaje"
+
+#: models.py:17
+msgid "from user"
+msgstr "de"
+
+#: models.py:19
+msgid "to user"
+msgstr "para"
+
+#: models.py:22
+msgid "latest message"
+msgstr "ultimo mensaje"
+
+#: models.py:28
+msgid "contact"
+msgstr "contacto"
+
+#: models.py:29
+msgid "contacts"
+msgstr "contactos"
+
+#: models.py:32
+#, python-format
+msgid "%(from_user)s and %(to_user)s"
+msgstr "%(from_user)s y %(to_user)s"
+
+#: models.py:58 models.py:68
+msgid "recipient"
+msgstr "destinatario"
+
+#: models.py:60 models.py:100
+msgid "message"
+msgstr "mensaje"
+
+#: models.py:61
+msgid "read at"
+msgstr "leeido el"
+
+#: models.py:63
+msgid "recipient deleted at"
+msgstr "destinatario eliminado el"
+
+#: models.py:69 models.py:89
+msgid "recipients"
+msgstr "destinatarios"
+
+#: models.py:72
+#, python-format
+msgid "%(message)s"
+msgstr "%(message)s"
+
+#: models.py:81
+msgid "body"
+msgstr "cuerpo"
+
+#: models.py:85
+msgid "sender"
+msgstr "remitente"
+
+#: models.py:90
+msgid "sent at"
+msgstr "enviado el"
+
+#: models.py:93
+msgid "sender deleted at"
+msgstr "remitente eliminado el"
+
+#: models.py:101
+msgid "messages"
+msgstr "mensajes"
+
+#: views.py:72
+msgid "Create"
+msgstr "Creado"
+
+#: views.py:108
+msgid "The message was sent."
+msgstr "El mensaje se envió"
+
+#: views.py:184
+msgid "Message is succesfully restored."
+msgid_plural "Messages are succesfully restored."
+msgstr[0] "El mensaje se ha restaurado con éxito"
+msgstr[1] "Los mensajes se han restaurado con éxito"
+
+#: views.py:188
+msgid "Message is successfully removed."
+msgid_plural "Messages are successfully removed."
+msgstr[0] "El mensaje se ha removido con éxito"
+msgstr[1] "Los mensajes se han removido con éxito"
+
+#: templates/messages/message_detail.html:9
+#: templates/messages/message_list.html:6
+msgid "Messages"
+msgstr "Mensajes"
+
+#: templates/messages/message_detail.html:25
+msgid "Reply message"
+msgstr "Responder mensaje"
+
+#: templates/messages/message_detail.html:45
+msgid "Delete message"
+msgstr "Eliminar mensaje"
+
+#: templates/messages/message_form.html:87
+msgid "Send message"
+msgstr "Enviar mensaje"
+
+#: templates/messages/message_form.html:107
+msgid "Send"
+msgstr "Enviar"
+
+#: templates/messages/message_form.html:108
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: templates/messages/message_list.html:11
+msgid "Compose message"
+msgstr "Escribir mensaje"
+
+#: templates/messages/message_list.html:27
+#: templates/messages/message_list.html:40
+msgid "new"
+msgstr "nuevo"
+
+#: templates/notification/user_message/full.txt:3
+msgid "sent you a message"
+msgstr "te envió un mensaje"

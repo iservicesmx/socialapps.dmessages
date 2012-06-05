@@ -69,7 +69,7 @@ class MessageRecipient(models.Model):
         verbose_name_plural = _("recipients")
 
     def __unicode__(self):
-        return (_("%(message)s")
+        return (_("%(message)s") # ???
                 % {'message': self.message})
 
     def is_read(self):

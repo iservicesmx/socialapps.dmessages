@@ -105,7 +105,7 @@ class MessageCompose(CreateView):
         if notification:
             notification.send(recipients, 'user_message', {'from_user' : sender.get_profile(), 'message' : body });
 
-        messages.success(self.request, _('Message is sent.'), fail_silently=True)
+        messages.success(self.request, _('The message was sent.'), fail_silently=True)
         
         requested_redirect = self.request.REQUEST.get(REDIRECT_FIELD_NAME, False)
 
