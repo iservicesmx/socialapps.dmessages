@@ -1,24 +1,22 @@
 {% extends 'messages/base_message.html' %}
 {% load i18n messages_tags avatar_tags%}
 
-
-{% block content_tabs %}
-	<a class="brand">{% trans "Messages" %}</a>
-	<ul class="nav pull-right">
-		<li class="vertical-divider"></li>
-		<li>
+{% block content_full %}
+<div class="main-tabs">
+	<ul class="nav nav-tabs">
+	    <li class="active"><a href="#" data-toggle="tab"><i class="icon-envelope"></i> {% trans 'Messages' %}</a></li>
+		<li class="pull-right">
 			<div class="btn-group">
-				<a class="btn primary modal-launch-button" href="#modal-dialog" data-toggle="modal" data-content="{% url socialapps_messages_compose %}"><i class="icon-envelope"></i>&nbsp;{% trans "Compose message" %}</a>
+				<a class="btn modal-launch-button" href="#modal-dialog" data-toggle="modal" data-content="{% url socialapps_messages_compose %}"><i class="icon-envelope"></i>&nbsp;{% trans "Compose message" %}</a>
 			</div>
 		</li>
+		
 	</ul>
-{% endblock %}
 
-{% block content_full %}
-	<div id="messages">
+	
+	<div id="messages" class="tab-content">
 		{% for message in message_list %}
-			<div class="row">
-				<div class="span12">
+			<div>
 					{% if message.from_user == user %}
 						{% get_unread_message_count_between user and message.to_user as unread_between_count %}
 						<a class="conversation-item" href="{% url socialapps_messages_detail message.to_user.id %}">
@@ -46,8 +44,8 @@
 							</div>
 						</a>
 					{% endif %}
-				</div>
 			</div>
 		{% endfor %}
 	</div>
+</div>
 {% endblock %}

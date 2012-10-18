@@ -29,7 +29,23 @@
 {% endblock %}
 
 {% block content_full %}
-<div id="messages">
+<div class="main-tabs">
+	<ul class="nav nav-tabs">
+	    <li><a href="{% url socialapps_messages_list %}"><i class="icon-envelope"></i> {% trans 'Messages' %}</a></li>
+		<li class="active">
+			<a href="#"><i class="icon-user"></i> {{ recipient.get_profile.name }} </a>
+		</li>
+		
+		<li class="pull-right">
+			<div class="btn-group">
+				<a class="btn modal-launch-button" href="#modal-dialog" data-toggle="modal" data-content="{% url socialapps_messages_compose_to recipient.id %}"><i class="icon-share-alt"></i>&nbsp;{% trans "Reply message" %}</a>
+			</div>
+		</li>
+		
+	</ul>
+
+	
+	<div id="messages" class="tab-content">
 	{% for message in message_list %}
 		<li class="{% if message.sender == user %}send{% else %}received{% endif %}">			
 			<div class="{% if message.sender == user %} to_user {% else %} from_user {%endif %}">
@@ -49,4 +65,6 @@
 			</div>
 		</li>
 	{% endfor %}
+	</div>
+</div>
 {% endblock %}
