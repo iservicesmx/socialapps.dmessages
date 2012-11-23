@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load bootstrap_tags %}
-
 	<script type="text/javascript">
+        var recipients = [];
 		function save(data, statusText, xhr, $form) {
 			if (data.success) {
 				window.location = data.success_url;
@@ -14,71 +14,112 @@
 				}
 			}
 		}
+        function gatherRecipients($form, options) {
+            var arr = jQuery.map(recipients, function(n, i){
+                return n.category[0] + ':' + n.id;
+            });
+            $('#message-form #id_to').val(arr.join(','));
+        }
+
+        $.widget( "custom.catcomplete", $.ui.autocomplete, {
+            _renderMenu: function( ul, items ) {
+                ul.addClass('nav nav-list');
+                var that = this,
+                    currentCategory = "";
+                // console.log(items, recipients);
+                $.each( items, function( index, item ) {
+                    console.log("ok");
+                    if ($.grep(recipients, function(n) { return (n.label === item.label); }).length > 0)
+                        return true;
+                    if ( item.category != currentCategory ) {
+                        ul.append( "<li class='nav-header'>" + item.category + "</li>" );
+                        currentCategory = item.category;
+                    }
+                    that._renderItem( ul, item );
+                });
+            },
+
+            _renderItem: function( ul, item ) {
+                if (item.category === 'user') {
+                    return $( "<li></li>" )
+                    .data( "item.autocomplete", item )
+                    .append( "<a><i class='icon-user'></i>"+ item.label + "</a>" )
+                    .appendTo( ul );
+                } else {
+                    return $( "<li></li>" )
+                    .data( "item.autocomplete", item )
+                    .append( "<a><i class='icon-group'></i>"+ item.label + "</a>" )
+                    .appendTo( ul );
+                }
+            }
+
+        });
+
 	    $(document).ready(function() {
-			$('#message-form').ajaxForm({dataType : 'json', success : save });
-			{% if users %}
-				$(function() {
-					var availableTags = [
-						{% for u in users %}
-						{
-							value: "{{ u.id }}",
-							label: "{{ u.get_profile.name }}",
-							icon: "{{ u.get_profile.get_avatar_url }}",
-						},	
-						{% endfor %}
-					];
-					function split( val ) {
-						return val.split( /,\s*/ );
-					}
-					function extractLast( term ) {
-						return split( term ).pop();
-					}
-					$( "#to_autocomplete" )
-						// don't navigate away from the field on tab when selecting an item
-						.bind( "keydown", function( event ) {
-							if ( event.keyCode === $.ui.keyCode.TAB &&
-									$( this ).data( "autocomplete" ).menu.active ) {
-								event.preventDefault();
-							}
-					}).autocomplete({
-						minLength: 0,
-						source: function( request, response ) {
-							// delegate back to autocomplete, but extract the last term
-							response( $.ui.autocomplete.filter(
-								availableTags, extractLast( request.term ) ) );
-						},
-						focus: function() {
-							// prevent value inserted on focus
-							return false;
-						},
-						select: function( event, ui ) {
-							var terms = split( this.value );
-							// remove the current input
-							terms.pop();
-							// add the selected item
-							terms.push( ui.item.label );
-							// add placeholder to get the comma-and-space at the end
-							terms.push( "" );
-							this.value = terms.join( ", " );
-							//again for users id
-							var terms = split( $( "#id_to" ).val() );
-							// remove the current input
-							terms.pop();
-							// add the selected item
-							terms.push( ui.item.value );
-							// add placeholder to get the comma-and-space at the end
-							terms.push( "" );
-							$( "#id_to" ).val(terms.join( ","));
-							return false;
-						}
-					}).data( "autocomplete" )._renderItem = function( ul, item ) {
-						return $( "<li></li>" )
-							.data( "item.autocomplete", item )	
-							.append( "<a><img width='16' height='16' src='" + item.icon + "'/>" + item.label + "</a>" )
-							.appendTo( ul );
-					};
-				});
-			{% endif %}
+			$('#message-form').ajaxForm({dataType : 'json', success : save, /*beforeSubmit: loadingForm, */beforeSerialize: gatherRecipients });
+            $('.removeRecipient').live('click', function(e) {
+                id = $(this).attr('data-id');
+                category = $(this).attr('data-category');
+                recipients = $.grep(recipients, function(n) {
+                    if (n.id == id)
+                        if (n.category == category)
+                            return false;
+                    return true;
+                });
+                $(this).remove();
+                return false;
+            });
+            $("#to_autocomplete_list").click(function(e){
+                $(this).find('input').focus();
+            });
+            $('#to_autocomplete_list input').focus(function() {
+                $(this).parents('#to_autocomplete_list').addClass('focus');
+            });
+            $('#to_autocomplete_list input').blur(function() {
+                $(this).parents('#to_autocomplete_list').removeClass('focus');
+            });
+            $('#to_autocomplete').keydown(function(event) {
+                if (event.which == 8) {
+                    if(!this.value) {
+                        var $item = $('#to_autocomplete_list a').last();
+                        var id = $item.attr('data-id');
+                        var category = $item.attr('data-category');
+                        recipients = $.grep(recipients, function(n) {
+                            if (n.id == id)
+                                if (n.category == category)
+                                    return false;
+                            return true;
+                        });
+                        $item.remove();
+                    }
+                }
+            });
+            $("#to_autocomplete").catcomplete({
+                minLength: 2,
+                source: "{% url socialapps_messages_recipients %}",
+                autoFocus: true,
+                select: function(event, ui) {
+                    var item;
+                    if (ui.item.category === 'user') {
+                        item = '<a href="#" class="removeRecipient" data-id="'+ ui.item.id +'" data-category="user"><span class="label label-info" style="display: inline;"><i class="icon-user"></i>&nbsp;'+ ui.item.label + '</span></a>';
+                    } else {
+                        item = '<a href="#" class="removeRecipient" data-id="'+ ui.item.id +'" data-category="group"><span class="label label-info"><i class="icon-group"></i>&nbsp;'+ ui.item.label + '</span></a>';
+                    }
+                    $(item).insertBefore($('#to_autocomplete_list input'));
+                    recipients.push(ui.item);
+                    $('#to_autocomplete').val('');
+                    return false;
+                },
+                focus: function(event, ui) {
+                    $('.ui-autocomplete.nav .ui-menu-item').removeClass('active');
+                    $item = $('.ui-autocomplete.nav .ui-state-hover');
+
+                    // $item = $items.find('.ui-state-hover')
+                    $item.parent().addClass('active');
+                    $item.removeClass('ui-state-hover');
+                    $('#to_autocomplete').val(ui.item.label);
+                },
+            });
 	    });
 	</script>
 
@@ -86,24 +127,22 @@
 	<a class="close" data-dismiss="modal">×</a>
 	<h3>{% trans "Send message" %}</h3>
 </div>
-<form action="{% url socialapps_messages_compose %}" method="post" class="form-horizontal" id="message-form">
+<form action="{% url socialapps_messages_compose %}" method="post" class="form" id="message-form">
 	{% csrf_token %}
 	<input type="hidden" name="next" id="id_next" value="{{ request.REQUEST.next }}" />
 		<div class="modal-body">
-			<div id="message-send-errors"><ul class="errorlist"></ul></div>	
+			<div id="message-send-errors"><ul class="errorlist"></ul></div>
 			<fieldset>
-				{% if users %}
-					<div class="clearfix">
-						<label for="to_autocomplete">{% trans "To" %}</label>
-						<div class="input">
-							<input type="text" id="to_autocomplete" val=""/>
-						</div>
+				<div class="clearfix">
+					<label for="to_autocomplete">{% trans "To" %}</label>
+					<div class="input">
+                        <div id="to_autocomplete_list"><input type="text" id="to_autocomplete"/></div>
 					</div>
-				{% endif %}
+				</div>
 				{{ form|as_bootstrap }}
 	  		</fieldset>
 		</div>
-		<div class="modal-footer">			
+		<div class="modal-footer">
 	  		<input type="submit" name="send" value="{% trans "Send" %}" class="btn btn-primary"/>
 			<a href="#" class="btn" data-dismiss="modal">{% trans "Cancel" %}</a>
 		</div>

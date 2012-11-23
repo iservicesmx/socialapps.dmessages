@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import widgets
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.utils.translation import ugettext_lazy as _
 
 class CommaSeparatedUserInput(widgets.Input):
@@ -12,6 +12,8 @@ class CommaSeparatedUserInput(widgets.Input):
         elif isinstance(value, (list, tuple)):
             value = (', '.join([user.username for user in value]))
         return super(CommaSeparatedUserInput, self).render(name, value, attrs)
+
+# class CommaSeparatedFullName(widgets.Input):
 
 class CommaSeparatedUserIdField(forms.Field):
     """
@@ -36,9 +38,12 @@ class CommaSeparatedUserIdField(forms.Field):
     def clean(self, value):
         super(CommaSeparatedUserIdField, self).clean(value)
 
-        uids = set(value.split(','))
-        uids_set = set([int(uid.strip()) for uid in uids if uid])
+        ids = set(value.split(','))
+        uids_set = set([int(uid.split(':')[1].strip()) for uid in ids if uid.split(':')[0] == 'u'])
         users = list(User.objects.filter(id__in=uids_set))
+
+        gids_set = set([int(uid.split(':')[1].strip()) for uid in ids if uid.split(':')[0] == 'g'])
+        groups = list(Group.objects.filter(id__in=gids_set))
 
         # Check for unknown names.
         unknown_names = uids_set ^ set([user.id for user in users])
@@ -55,4 +60,4 @@ class CommaSeparatedUserIdField(forms.Field):
             humanized_usernames = ', '.join(list(unknown_names) + invalid_users)
             raise forms.ValidationError(_("The following users ids are incorrect: %(users)s.") % {'users': humanized_usernames})
 
-        return users
+        return {'users': users, 'groups': groups}

@@ -7,9 +7,10 @@ from django.utils.translation import ungettext
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.generic import ListView
+from django.db.models import Q
 from socialapps.core.utils import python_to_json
 
-from socialapps.core.views import CreateView
+from socialapps.core.views import CreateView, JSONTemplateView
 from socialapps.dmessages.models import Message, MessageRecipient, MessageContact
 from socialapps.dmessages.forms import ComposeForm
 
@@ -31,7 +32,7 @@ class MessageList(ListView):
     paginate_by     = 50
     page            = 1
     context_object_name = "message_list"
-    
+
     def get_queryset(self):
         return MessageContact.objects.get_contacts_for(self.request.user)
 
@@ -43,13 +44,13 @@ class MessageDetail(ListView):
     paginate_by     = 10
     page            = 1
     context_object_name = "message_list"
-    
+
     def get_queryset(self):
         uid = self.kwargs.get('userid', None)
         self.recipient = get_object_or_404(User, id=uid)
         return Message.objects.get_conversation_between(self.request.user,
                                                         self.recipient)
-        
+
     def get_context_data(self, **kwargs):
         message_pks = [m.pk for m in kwargs['object_list']]
         unread_list = MessageRecipient.objects.filter(message__in=message_pks,
@@ -57,7 +58,7 @@ class MessageDetail(ListView):
                                                       read_at__isnull=True)
         now = datetime.datetime.now()
         unread_list.update(read_at=now)
-        
+
         kwargs['recipient'] = self.recipient
         return super(MessageDetail, self).get_context_data(**kwargs)
 
@@ -73,7 +74,7 @@ class MessageCompose(CreateView):
     type_title      = _("Message")
     form_class      = ComposeForm
     template_form   = "messages/message_form.html"
-    
+
     def get_initial(self):
         initial = {}
         recipients = self.kwargs.get('recipients',None)
@@ -83,43 +84,71 @@ class MessageCompose(CreateView):
             recipients = [str(u.id) for u in User.objects.filter(id__in=uids_list)]
             initial["to"] = ','.join(recipients)
         return initial
-        
+
     def get_context_data(self, **kwargs):
         if not self.get_initial():
             users = User.objects.filter(is_active = True)
-        else: 
+        else:
             users = None
         kwargs.update({
             'users' : users,
         })
         return super(MessageCompose, self).get_context_data(**kwargs)
-        
+
     def form_valid(self, form):
-        
+
         sender = self.request.user
         recipients = form.cleaned_data['to']
         body = form.cleaned_data['body']
+        print recipients['groups']
+        print recipients['users']
+        for item in recipients['groups']:
+            print item.user_set.all()
+            # members_id = members.values_list('id', flat=True)
+            msg_group = Message.objects.send_message(sender, item.user_set.all(), body)
 
-        msg = Message.objects.send_message(sender, recipients, body)
+            if notification:
+                notification.send(item.user_set.all(), 'user_message', {'from_user' : sender.get_profile(), 'message' : body });
+
+
+        # for item in recipients['user']:
+        # members_id = members.values_list('id', flat=True)
+        msg_users = Message.objects.send_message(sender, recipients['users'], body)
 
         if notification:
-            notification.send(recipients, 'user_message', {'from_user' : sender.get_profile(), 'message' : body });
+            notification.send(recipients['users'], 'user_message', {'from_user' : sender.get_profile(), 'message' : body });
 
         messages.success(self.request, _('The message was sent.'), fail_silently=True)
-        
+
         requested_redirect = self.request.REQUEST.get(REDIRECT_FIELD_NAME, False)
 
         # Redirect mechanism
         self.success_url = reverse('socialapps_messages_list')
-        
-        if requested_redirect: 
+
+        if requested_redirect:
             self.success_url = requested_redirect
         elif len(recipients) == 1:
             self.success_url = reverse('socialapps_messages_detail', kwargs={'userid': recipients[0].id})
         return HttpResponse(python_to_json({"success": True, "success_url": self.success_url}), content_type='application/json')
-        
+
     def form_invalid(self, form):
         return HttpResponse(python_to_json({"errors" : form.errors}), content_type='application/json')
+
+class MessageRecipients(JSONTemplateView):
+    template_name = 'messages/message_list.html'
+    def get_context_data(self, *args, **kwargs):
+        items = [{'label': item.name, 'category': 'user', 'id': item.user.id } for item in self.request.site.school.members] + [{'label': item.group.name, 'id': item.group.id, 'category': 'group'} for item in self.request.site.school.groups]
+        term = self.request.GET.get('term', None)
+        if term:
+            users = self.request.site.school.members.filter(Q(user__first_name__icontains=term) | Q(user__last_name__icontains=term) | Q(user__email__icontains=term))
+            groups = self.request.site.school.groups.filter(group__name__icontains=term)
+        else:
+            users = self.request.site.school.members
+            groups = self.request.site.school.groups
+        print users
+        print groups
+
+        return [{'label': item.name, 'category': 'user', 'id': item.user.id } for item in users] + [{'label': item.group.name, 'id': item.group.id, 'category': 'group'} for item in groups]
 
 def message_remove(request, undo=False):
     """

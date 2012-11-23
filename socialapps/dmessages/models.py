@@ -78,7 +78,7 @@ class MessageRecipient(models.Model):
 
 class Message(models.Model):
     """ Private message model, from user to user(s) """
-    body    = models.TextField(_("body"))
+    body    = models.TextField(_("body"), blank=False)
     
     sender  = models.ForeignKey(User,
                             related_name='sent_messages',

@@ -5,6 +5,10 @@ from django.contrib.auth.decorators import login_required
 from socialapps.dmessages import views as messages_views
 
 urlpatterns = patterns('',
+    url(r'^get_users/$',
+        login_required(messages_views.MessageRecipients.as_view()),
+        name='socialapps_messages_recipients'),
+
     url(r'^compose/$',
         login_required(messages_views.MessageCompose.as_view()),
         name='socialapps_messages_compose'),
