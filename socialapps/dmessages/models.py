@@ -21,6 +21,7 @@ class MessageContact(models.Model):
     latest_message = models.ForeignKey('Message',
                                 verbose_name=_("latest message"))
     objects = MessageContactManager()
+    hide        = models.BooleanField(_('Hide message'), default=False)
 
     class Meta:
         unique_together = ('from_user', 'to_user')
@@ -123,7 +124,7 @@ class Message(models.Model):
             created = True
         return created
 
-    def update_contacts(self, to_user_list):
+    def update_contacts(self, to_user_list, hide):
         """
         Updates the contacts that are used for this message.
 
@@ -138,6 +139,7 @@ class Message(models.Model):
         for user in to_user_list:
             MessageContact.objects.update_contact(self.sender,
                                                   user,
-                                                  self)
+                                                  self,
+                                                  hide)
             updated = True
         return updated

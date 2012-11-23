@@ -81,38 +81,28 @@ class MessageCompose(CreateView):
 
         if recipients:
             uids_list = [r.strip() for r in recipients.split("+")]
-            recipients = [str(u.id) for u in User.objects.filter(id__in=uids_list)]
+            recipients = ['u:' + str(u.id) for u in User.objects.filter(id__in=uids_list)]
             initial["to"] = ','.join(recipients)
         return initial
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, *args, **kwargs):
         if not self.get_initial():
-            users = User.objects.filter(is_active = True)
-        else:
-            users = None
-        kwargs.update({
-            'users' : users,
-        })
-        return super(MessageCompose, self).get_context_data(**kwargs)
+            kwargs.update({
+                'autocomplete' : True,
+            })
+        return super(MessageCompose, self).get_context_data(*args, **kwargs)
 
     def form_valid(self, form):
 
         sender = self.request.user
         recipients = form.cleaned_data['to']
         body = form.cleaned_data['body']
-        print recipients['groups']
-        print recipients['users']
         for item in recipients['groups']:
-            print item.user_set.all()
-            # members_id = members.values_list('id', flat=True)
-            msg_group = Message.objects.send_message(sender, item.user_set.all(), body)
+            msg_group = Message.objects.send_message(sender, item.user_set.all(), body, True)
 
             if notification:
                 notification.send(item.user_set.all(), 'user_message', {'from_user' : sender.get_profile(), 'message' : body });
 
-
-        # for item in recipients['user']:
-        # members_id = members.values_list('id', flat=True)
         msg_users = Message.objects.send_message(sender, recipients['users'], body)
 
         if notification:
@@ -145,8 +135,6 @@ class MessageRecipients(JSONTemplateView):
         else:
             users = self.request.site.school.members
             groups = self.request.site.school.groups
-        print users
-        print groups
 
         return [{'label': item.name, 'category': 'user', 'id': item.user.id } for item in users] + [{'label': item.group.name, 'id': item.group.id, 'category': 'group'} for item in groups]
 

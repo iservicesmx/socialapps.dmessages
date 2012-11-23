@@ -6,7 +6,7 @@ import datetime
 class MessageContactManager(models.Manager):
     """ Manager for the :class:`MessageContact` model """
 
-    def get_or_create(self, from_user, to_user, message):
+    def get_or_create(self, from_user, to_user, message, hide):
         """
         Get or create a Contact
 
@@ -23,20 +23,24 @@ class MessageContactManager(models.Manager):
             created = True
             contact = self.create(from_user=from_user,
                                   to_user=to_user,
-                                  latest_message=message)
+                                  latest_message=message,
+                                  hide=hide)
 
         return (contact, created)
 
-    def update_contact(self, from_user, to_user, message):
+    def update_contact(self, from_user, to_user, message, hide):
         """ Get or update a contacts information """
         contact, created = self.get_or_create(from_user,
                                               to_user,
-                                              message)
+                                              message,
+                                              hide)
 
         # If the contact already existed, update the message
         if not created:
             contact.latest_message = message
-            contact.save()
+            # if not contact.hide:
+            #     contact.hide = hide
+            #     contact.save()
         return contact
 
     def get_contacts_for(self, user):
@@ -50,13 +54,13 @@ class MessageContactManager(models.Manager):
             The :class:`User` which to get the contacts for.
 
         """
-        contacts = self.filter(Q(from_user=user) | Q(to_user=user))
+        contacts = self.filter(Q(from_user=user) | Q(to_user=user)).exclude(from_user=user, hide=True)
         return contacts
 
 class MessageManager(models.Manager):
     """ Manager for the :class:`Message` model. """
 
-    def send_message(self, sender, to_user_list, body):
+    def send_message(self, sender, to_user_list, body, hide=False):
         """
         Send a message from a user, to a user.
 
@@ -76,7 +80,7 @@ class MessageManager(models.Manager):
 
         # Save the recipients
         msg.save_recipients(to_user_list)
-        msg.update_contacts(to_user_list)
+        msg.update_contacts(to_user_list, hide)
 
         return msg
 

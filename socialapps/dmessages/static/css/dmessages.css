@@ -27,6 +27,7 @@
 }
 
 #messages .conversation-item img{
+    margin: 6px;
     float: left;
 }
 
