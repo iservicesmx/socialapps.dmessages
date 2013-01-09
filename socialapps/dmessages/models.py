@@ -97,7 +97,7 @@ class Message(models.Model):
     objects = MessageManager()
 
     class Meta:
-        ordering = ['-sent_at']
+        ordering = ['sent_at']
         verbose_name = _("message")
         verbose_name_plural = _("messages")
 
