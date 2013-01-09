@@ -36,9 +36,8 @@ class MessageContactManager(models.Manager):
                                               hide)
 
         # If the contact already existed, update the message
-        print message
         if not created:
-            if not contact.hide:
+            if not hide:
                 contact.latest_message = message
                 contact.save()
         return contact
