@@ -34,12 +34,12 @@ class MessageContactManager(models.Manager):
                                               to_user,
                                               message,
                                               hide)
-
         # If the contact already existed, update the message
         if not created:
             if not hide:
-                contact.latest_message = message
-                contact.save()
+                contact.hide = hide
+            contact.latest_message = message
+            contact.save()
         return contact
 
     def get_contacts_for(self, user):
@@ -71,7 +71,8 @@ class MessageManager(models.Manager):
 
         :param message:
             String containing the message.
-
+        :param hide:
+            Boolean, for hide the conversation (used when sendin msg to groups)
         """
         msg = self.model(sender=sender,
                          body=body)

@@ -1,6 +1,7 @@
 {% extends 'messages/base_message.html' %}
-{% load i18n avatar_tags %}
-
+{% load i18n %}
+{% load avatar_tags %}
+{% load pagination_tags %}
 
 {% block content_tabs %}
 	<ul class="nav cms-breadcrumb">
@@ -65,6 +66,7 @@
 			</div>
 		</li>
 	{% endfor %}
+	{% paginate %}
 	</div>
 </div>
 {% endblock %}

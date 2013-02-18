@@ -29,8 +29,7 @@ class MessageList(ListView):
     an imitation of the iPhone SMS functionality.
     """
     template_name   = "messages/message_list.html"
-    paginate_by     = 50
-    page            = 1
+    paginate_by     = 10
     context_object_name = "message_list"
 
     def get_queryset(self):
@@ -42,7 +41,6 @@ class MessageDetail(ListView):
     """
     template_name   = "messages/message_detail.html"
     paginate_by     = 10
-    page            = 1
     context_object_name = "message_list"
 
     def get_queryset(self):
