@@ -30,6 +30,23 @@
 {% endblock %}
 
 {% block content_full %}
+<script type="text/javascript">
+	$('document').ready(function(){
+		$('.show-tooltip').tooltip();
+		$('.message-content').hover(
+			function(){
+				$(this).find('.remove-message').removeClass('hidden');
+			},
+			function(){
+				$(this).find('.remove-message').addClass('hidden');
+			}
+		);
+		$('.remove-message').click(function(e){
+			e.preventDefault();
+			$(this).parent().submit();
+		})
+	});
+</script>
 <div class="main-tabs">
 	<ul class="nav nav-tabs">
 	    <li><a href="{% url socialapps_messages_list %}"><i class="icon-envelope"></i> {% trans 'Messages' %}</a></li>
@@ -59,7 +76,7 @@
 					{% csrf_token %}
 					<input type="hidden" name="message_pks" value="{{message.id}}"/>
 					<input type="hidden" name="next" value="{% url socialapps_messages_detail recipient.id %}"/>
-					<input type="submit" value="" class="uiSelectorButton uiCloseButton tooltip" title="{% trans 'Delete message' %}"/>
+					<a href="#" class="pull-right remove-message hidden"><i class="icon-trash"></i></a>
 				</form>
 			</div>
 			<p class="date">{{ message.sent_at }}</p>		
