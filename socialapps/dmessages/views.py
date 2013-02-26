@@ -18,7 +18,8 @@ from socialapps.dmessages.forms import ComposeForm
 import datetime
 from socialapps import settings
 if "notification" in settings.INSTALLED_APPS:
-    from notification import models as notification
+    import socialapps.core.notifications.functions as notification
+    # from notification import models as notification
 else:
     notification = none
 
@@ -99,12 +100,12 @@ class MessageCompose(CreateView):
             msg_group = Message.objects.send_message(sender, item.user_set.all(), body, True)
 
             if notification:
-                notification.send(item.user_set.all(), 'user_message', {'from_user' : sender.get_profile(), 'message' : body });
+                notification.send_now(item.user_set.all(), 'user_message', {'from_user' : sender.get_profile(), 'message' : body });
 
         msg_users = Message.objects.send_message(sender, recipients['users'], body)
 
         if notification:
-            notification.send(recipients['users'], 'user_message', {'from_user' : sender.get_profile(), 'message' : body });
+            notification.send_now(recipients['users'], 'user_message', {'from_user' : sender.get_profile(), 'message' : body });
 
         messages.success(self.request, _('The message was sent.'), fail_silently=True)
 
