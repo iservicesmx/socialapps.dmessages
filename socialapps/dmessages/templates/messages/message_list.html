@@ -29,7 +29,7 @@
 							{% avatar message.to_user 50 %}
 							<div class="name">{{ message.to_user.get_profile.name }}</div>
 							<div class="sent_at">{{ message.latest_message.sent_at }}</div>
-							<div class="latest-message">{{ message.latest_message }}</div>
+							<div class="latest-message">{{ message.latest_message|truncatechars:50 }}</div>
 						</div>
 					</a>
 				{% else %}

@@ -4,86 +4,86 @@
 {% load pagination_tags %}
 
 {% block content_tabs %}
-	<ul class="nav cms-breadcrumb">
-		<li>
-			<a href="{% url socialapps_messages_list %}">
-				<div class="item">{% trans "Messages" %}</div>
-				<div class="separator right"></div>
-			</a>
-		</li>
-		<li class="current">
-			<a href="#">
-				<div class="separator left"></div>
-				<div class="item">{{ recipient.get_profile.name }}</div>
-				<div class="separator right"></div>
-			</a>
-		</li>
-	</ul>
-	<ul class="nav pull-right">
-		<li class="vertical-divider"></li>
-		<li>
-			<div class="btn-group">
-				<a class="btn primary modal-launch-button" href="#modal-dialog" data-toggle="modal" data-content="{% url socialapps_messages_compose_to recipient.id %}"><i class="icon-share-alt"></i>&nbsp;{% trans "Reply message" %}</a>
-			</div>
-		</li>
-	</ul>
+    <ul class="nav cms-breadcrumb">
+        <li>
+            <a href="{% url socialapps_messages_list %}">
+                <div class="item">{% trans "Messages" %}</div>
+                <div class="separator right"></div>
+            </a>
+        </li>
+        <li class="current">
+            <a href="#">
+                <div class="separator left"></div>
+                <div class="item">{{ recipient.get_profile.name }}</div>
+                <div class="separator right"></div>
+            </a>
+        </li>
+    </ul>
+    <ul class="nav pull-right">
+        <li class="vertical-divider"></li>
+        <li>
+            <div class="btn-group">
+                <a class="btn primary modal-launch-button" href="#modal-dialog" data-toggle="modal" data-content="{% url socialapps_messages_compose_to recipient.id %}"><i class="icon-share-alt"></i>&nbsp;{% trans "Reply message" %}</a>
+            </div>
+        </li>
+    </ul>
 {% endblock %}
 
 {% block content_full %}
 <script type="text/javascript">
-	$('document').ready(function(){
-		$('.show-tooltip').tooltip();
-		$('.message-content').hover(
-			function(){
-				$(this).find('.remove-message').removeClass('hidden');
-			},
-			function(){
-				$(this).find('.remove-message').addClass('hidden');
-			}
-		);
-		$('.remove-message').click(function(e){
-			e.preventDefault();
-			$(this).parent().submit();
-		})
-	});
+    $('document').ready(function(){
+        $('.show-tooltip').tooltip();
+        $('.message-content').hover(
+            function(){
+                $(this).find('.remove-message').removeClass('hidden');
+            },
+            function(){
+                $(this).find('.remove-message').addClass('hidden');
+            }
+        );
+        $('.remove-message').click(function(e){
+            e.preventDefault();
+            $(this).parent().submit();
+        })
+    });
 </script>
 <div class="main-tabs">
-	<ul class="nav nav-tabs">
-	    <li><a href="{% url socialapps_messages_list %}"><i class="icon-envelope"></i> {% trans 'Messages' %}</a></li>
-		<li class="active">
-			<a href="#"><i class="icon-user"></i> {{ recipient.get_profile.name }} </a>
-		</li>
-		
-		<li class="pull-right">
-			<div class="btn-group">
-				<a class="btn modal-launch-button" href="#modal-dialog" data-toggle="modal" data-content="{% url socialapps_messages_compose_to recipient.id %}"><i class="icon-share-alt"></i>&nbsp;{% trans "Reply message" %}</a>
-			</div>
-		</li>
-		
-	</ul>
+    <ul class="nav nav-tabs">
+        <li><a href="{% url socialapps_messages_list %}"><i class="icon-envelope"></i> {% trans 'Messages' %}</a></li>
+        <li class="active">
+            <a href="#"><i class="icon-user"></i> {{ recipient.get_profile.name }} </a>
+        </li>
+        
+        <li class="pull-right">
+            <div class="btn-group">
+                <a class="btn modal-launch-button" href="#modal-dialog" data-toggle="modal" data-content="{% url socialapps_messages_compose_to recipient.id %}"><i class="icon-share-alt"></i>&nbsp;{% trans "Reply message" %}</a>
+            </div>
+        </li>
+        
+    </ul>
 
-	
-	<div id="messages" class="tab-content">
-	{% for message in message_list %}
-		<li class="{% if message.sender == user %}send{% else %}received{% endif %}">			
-			<div class="{% if message.sender == user %} to_user {% else %} from_user {%endif %}">
-				{% avatar message.sender 50 %}
-			</div>
-			<div class="message-content">
-			<div class="message-body">
-				{{ message.body }}
-				<form method="POST" action="{% url socialapps_messages_remove %}" class="delete-message">
-					{% csrf_token %}
-					<input type="hidden" name="message_pks" value="{{message.id}}"/>
-					<input type="hidden" name="next" value="{% url socialapps_messages_detail recipient.id %}"/>
-					<a href="#" class="pull-right remove-message hidden"><i class="icon-trash"></i></a>
-				</form>
-			</div>
-			<p class="date">{{ message.sent_at }}</p>		
-			</div>
-		</li>
-	{% endfor %}
-	{% paginate %}
-	</div>
+    
+    <div id="messages" class="tab-content">
+    {% for message in message_list %}
+        <li class="{% if message.sender == user %}send{% else %}received{% endif %}">           
+            <div class="{% if message.sender == user %} to_user {% else %} from_user {%endif %}">
+                {% avatar message.sender 50 %}
+            </div>
+            <div class="message-content">
+            <div class="message-body">
+                {{ message.body|urlizetrunc:50|linebreaksbr }}
+                <form method="POST" action="{% url socialapps_messages_remove %}" class="delete-message">
+                    {% csrf_token %}
+                    <input type="hidden" name="message_pks" value="{{message.id}}"/>
+                    <input type="hidden" name="next" value="{% url socialapps_messages_detail recipient.id %}"/>
+                    <a href="#" class="pull-right remove-message hidden"><i class="icon-trash"></i></a>
+                </form>
+            </div>
+            <p class="date">{{ message.sent_at }}</p>       
+            </div>
+        </li>
+    {% endfor %}
+    {% paginate %}
+    </div>
 </div>
 {% endblock %}
